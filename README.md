@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏆 Eventos Deportivos - Sports Events App
 
-## Getting Started
+Aplicación Next.js que muestra eventos deportivos (Fútbol, Tenis, F1) de **hoy y los próximos 7 días** con caché inteligente actualizado diariamente vía Vercel Cron.
 
-First, run the development server:
+## 🎯 Características
+
+- **📅 Eventos en tiempo real** (hoy + 7 días)
+- **⚽ 3 Deportes**: Fútbol (Premier, La Liga, Liga Argentina), Tenis, F1
+- **🕐 Hora Colombia** (UTC-5) automáticamente convertida
+- **🎨 Diseño responsive** oscuro moderno con Tailwind CSS
+- **🔄 Caché inteligente** con Vercel KV (consulta APIs solo 1x/día)
+- **⏰ Cron Job automático** a las 6am Colombia (11am UTC)
+- **💾 Vercel KV** gratuito (almacenamiento de caché)
+
+## 🚀 Stack
+
+- **Next.js 14+** (App Router, TypeScript)
+- **Tailwind CSS** (diseño responsive oscuro)
+- **Vercel KV** (cache distribuido)
+- **API-Sports** (Football, Tennis, Formula1)
+- **Vercel Cron** (actualización automática)
+
+## 📋 Requisitos previos
+
+1. **API Key de api-sports.io** (gratis 10 req/min)
+   - Crear cuenta en h   - Crear cuenta en h   - Crear cuenta en h KE   - Crear cuenta en h   - Crear cuenta en h   - Crear cuenta en h KE   - Crear cuenta en h   - Crear cuenta en h   - Crear cuenta en h KE   - Crear cuenta en h   - Crear <t   - Crear cuenta en h s
+nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnna nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnna nnnnnnnnnnnnnnnnnnnnnnnio/
+API_SPORTS_KEY=your_api_key_here
+
+# Vercel KV (se configura# Vercel KV (se configura# Vercel KV (se configura# Vercel KT_# Vercel KV (se configura# Vercel KV (se configura# Vercel KV (se confire# Vercel KV (se configura# Vercel KV (se configura# Vercel n # Vercel KV (se configura# Vercel KV (se configura# VerVercel
+
+### 1. Push a GitHub
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git add .
+git commit -mgit commit -mgit commit -mgit commit -mgit co ogit commit -mgit commit -mgit commercel
+
+```bash
+vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O desde dashboard de Vercel:
+1. Conecta tu repo
+2. En "Environment Variables" añade: `API_SPORTS2. En "Environment Variables" añade: `API_SPORTS2z 2. En "Environment Variables" añade: `API_SPORTS2. En "Environment Variables" añade: `API_SPORTS2z 2. En "Environment Variables" añade: `API_SPORTS2. En "Environment Variables" añade: `API_SPORTS2z 2. En "Environment Variables" añade: `API_SPORTS2. En "Environ
+````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````�```````````````````````````````   ````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````�```````````````````````````````   `````````````````````````````````````````````````````````````````````````````````````````````````````````````````````eve``````````````````` Ev``````st.tsx      ``````````````````````````````````````````````````````````````````````````````````````````````````�� ``````��   ├── api.ts               # Lógica de APIs (Footbal````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````�```````````````````````````````   `                 # Configuración de cron job
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔄 Flujo de Funcionamiento
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Usuario visita app
+    ↓
+GET /api/events
+    ↓
+    ├─ ¿Hay cache fresco? (< 24h) → Servir cache
+    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    └    �im  
 
-## Learn More
+## 🐛 Troubleshooting
 
-To learn more about Next.js, take a look at the following resources:
+### Cron ## s### Cron ## s### ic### Crce### Cron ## s#en root
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - ons
+- Schedule: `0 11 * * *` (11:00 UTC = 6am Colombia)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Cache vacío al iniciar
+- Espera a que se ejecute el cron (6am Colombia)
+- O ejecuta manualmente: `curl https://tu-app.vercel.app/api/cron-refresh`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### No muestra eventos
+- Verifica que `API_SPORTS_KEY` esté en variables de entorno
+- Comprueba que hay eventos en esos deportes/ligas
+- Revisa logs de Vercel
 
-## Deploy on Vercel
+## 💡 Mejoras Futuras
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] Notificaciones push de eventos
+- [ ] Resultados finales en vivo
+- [ ] Favoritos guardados
+- [ ] Más deportes (Basketball, Baseball)
+- [ ] Filtro por equipo específico
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 Licencia
+
+MIT
+
+## 👨‍💻 Autor
+
+Creado con ❤️ para fans de deportes
+
+---
+
+**¿Preguntas?** Abre un issue en GitHub.
