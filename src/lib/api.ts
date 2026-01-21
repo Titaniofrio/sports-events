@@ -27,15 +27,18 @@ export function isEventInNext7Days(eventDate: Date): boolean {
   return eventDate >= today && eventDate <= future;
 }
 
-// Football API: Premier League (39), La Liga (140), Liga Argentina (128)
+// Football API: Premier League (39), La Liga (140), Liga Argentina (128), 
+// Champions League (2), Europa League (3), World Cup 2026 (1)
 export async function fetchFootballEvents(): Promise<SportEvent[]> {
-  const leagueIds = [39, 140, 128];
+  const leagueIds = [39, 140, 128, 2, 3, 1];
   const events: SportEvent[] = [];
 
   try {
     for (const leagueId of leagueIds) {
+      // Use season 2026 for World Cup, 2025 for others
+      const season = leagueId === 1 ? 2026 : 2025;
       const response = await fetch(
-        `${BASE_URL}/football/fixtures?league=${leagueId}&season=2025&status=NS&timezone=America/Bogota`,
+        `${BASE_URL}/football/fixtures?league=${leagueId}&season=${season}&status=NS&timezone=America/Bogota`,
         {
           headers: {
             'x-apisports-key': API_KEY || '',
