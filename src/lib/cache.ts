@@ -1,63 +1,58 @@
-import { kv } from '@vercel/kv';
-import { SportEvent, CacheData } from '@/types';
+import { SportEvent } from '@/types';
 
 const CACHE_KEY = 'sports-events-cache';
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const CACHE_TTL = 24 * 60 * 60;
 
 export async function getCachedEvents(): Promise<SportEvent[] | null> {
   try {
-    const cached = await kv.get<CacheData>(CACHE_KEY);
-
-    if (!cached) return null;
-
-    // Check if cache is still fresh
-    const now = Date.now();
-    if (now - cached.lastUpdate > cached.ttl) {
-      // Cache expired
-      await kv.del(CACHE_KEY);
+    if (!process.env.KV_REST_API_URL) {
+      console.warn('KV cache not configured, skipping cache read');
       return null;
     }
-
-    return cached.events;
+    const { kv } = await import('@vercel/kv');
+    const cached = await kv.get(CACHE_KEY);
+    if (cached && typeof cached === 'object' && 'events' in cached) {
+      const cacheData = cached as any;
+      return cacheData.events.map((event: any) => ({
+        ...event,
+        date: new Date(event.date),
+      }));
+    }
+    return null;
   } catch (error) {
-    console.error('Cache get error:', error);
+    console.warn('Cache read error:', error);
     return null;
   }
 }
 
 export async function setCachedEvents(events: SportEvent[]): Promise<void> {
   try {
-    const cacheData: CacheData = {
-      events,
-      lastUpdate: Date.now(),
-      ttl: CACHE_TTL,
+    if (!process.env.KV_REST_API_URL) {
+      console.warn('KV cache not configured, skipping cache write');
+      return;
+    }
+    const { kv } = await import('@vercel/kv');
+    const cacheData = {
+      events: events.map(event => ({
+        ...event,
+        date: event.date.toISOString(),
+      })),
+      timestamp: Date.now(),
     };
-
-    // Set with 25 hour expiration (slightly longer than our 24h TTL)
-    await kv.setex(CACHE_KEY, 25 * 60 * 60, JSON.stringify(cacheData));
+    await kv.setex(CACHE_KEY, CACHE_TTL, JSON.stringify(cacheData));
+    console.log('Cache updated successfully');
   } catch (error) {
-    console.error('Cache set error:', error);
+    console.warn('Cache write error:', error);
   }
 }
 
 export async function clearCache(): Promise<void> {
   try {
+    if (!process.env.KV_REST_API_URL) return;
+    const { kv } = await import('@vercel/kv');
     await kv.del(CACHE_KEY);
+    console.log('Cache cleared');
   } catch (error) {
-    console.error('Cache clear error:', error);
-  }
-}
-
-export async function isCacheFresh(): Promise<boolean> {
-  try {
-    const cached = await kv.get<CacheData>(CACHE_KEY);
-
-    if (!cached) return false;
-
-    const now = Date.now();
-    return now - cached.lastUpdate < cached.ttl;
-  } catch (error) {
-    console.error('Cache freshness check error:', error);
-    return false;
+    console.warn('Cache clear error:', error);
   }
 }
