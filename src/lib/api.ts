@@ -1,7 +1,9 @@
 import { SportEvent } from '@/types';
+import { mockEvents } from './mockData';
 
 const API_KEY = process.env.API_SPORTS_KEY;
 const BASE_URL = 'https://api.api-sports.io';
+const USE_MOCK = process.env.NODE_ENV === 'development' || !API_KEY;
 
 // Colombia timezone offset: UTC-5
 const COLOMBIA_OFFSET = -5 * 60; // -300 minutes
@@ -162,6 +164,12 @@ export async function fetchFormula1Events(): Promise<SportEvent[]> {
 }
 
 export async function fetchAllEvents(): Promise<SportEvent[]> {
+  // Use mock data in development or if API key is missing
+  if (USE_MOCK) {
+    console.log('Using mock data for development');
+    return mockEvents;
+  }
+
   const [footballEvents, tennisEvents, f1Events] = await Promise.all([
     fetchFootballEvents(),
     fetchTennisEvents(),
